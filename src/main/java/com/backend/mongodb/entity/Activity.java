@@ -15,7 +15,7 @@ import java.util.Date;
 @Document(collection = "activities")
 public class Activity extends Timestamp {
     @Id
-    private Long id;
+    private String id;
 
     @JsonProperty("activity_name")
     private String activityName;
