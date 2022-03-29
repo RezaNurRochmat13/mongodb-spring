@@ -28,4 +28,11 @@ public class ActivityController {
     public ResponseEntity<Object> createNewActivity(@RequestBody Activity payload) {
         return new ResponseEntity<>(activityService.createActivity(payload), HttpStatus.CREATED);
     }
+
+    @PutMapping("/activities/{id}")
+    public ResponseEntity<Object> updateActivity(@RequestBody Activity payload,
+                                                 @PathVariable String id) {
+        return new ResponseEntity<>(activityService.updateActivity(id, payload), HttpStatus.OK);
+    }
+
 }

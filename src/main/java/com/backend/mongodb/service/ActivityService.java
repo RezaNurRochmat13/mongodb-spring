@@ -8,4 +8,5 @@ public interface ActivityService {
     List<Activity> findAllActivities();
     Activity detailActivityById(String id);
     Activity createActivity(Activity payload);
+    Activity updateActivity(String id, Activity payload);
 }

@@ -34,4 +34,16 @@ public class ActivityServiceImpl implements ActivityService {
 
         return activityRepository.save(payload);
     }
+
+    @Override
+    public Activity updateActivity(String id, Activity payload) {
+        Activity activity = activityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found id : " + id));
+
+        activity.setActivityName(payload.getActivityName());
+        activity.setActivityDescription(payload.getActivityDescription());
+        activity.setAgent(payload.getAgent());
+
+        return activityRepository.save(activity);
+    }
 }
