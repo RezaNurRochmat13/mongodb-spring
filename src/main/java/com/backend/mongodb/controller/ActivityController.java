@@ -19,6 +19,11 @@ public class ActivityController {
         return new ResponseEntity<>(activityService.findAllActivities(), HttpStatus.OK);
     }
 
+    @GetMapping("/activities/{id}")
+    public ResponseEntity<Object> getDetailActivities(@PathVariable String id) {
+        return new ResponseEntity<>(activityService.detailActivityById(id), HttpStatus.OK);
+    }
+
     @PostMapping("/activities")
     public ResponseEntity<Object> createNewActivity(@RequestBody Activity payload) {
         return new ResponseEntity<>(activityService.createActivity(payload), HttpStatus.CREATED);
