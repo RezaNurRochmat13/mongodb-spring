@@ -2,7 +2,11 @@ package com.backend.mongodb.controller;
 
 import com.backend.mongodb.entity.Activity;
 import com.backend.mongodb.service.ActivityServiceImpl;
+import com.backend.mongodb.util.BaseResponseList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +18,21 @@ public class ActivityController {
     @Autowired
     private ActivityServiceImpl activityService;
 
+    @Autowired
+    private BaseResponseList baseResponseList;
+
     @GetMapping("/activities")
-    public ResponseEntity<Object> getAllActivities() {
-        return new ResponseEntity<>(activityService.findAllActivities(), HttpStatus.OK);
+    public ResponseEntity<Object> getAllActivities(@RequestParam(defaultValue = "0", name = "page") Integer page,
+                                                   @RequestParam(defaultValue = "10", name = "size") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Activity> activityPaging = activityService.findAllActivities(pageable);
+
+        baseResponseList.setCount(activityPaging.getSize());
+        baseResponseList.setTotal(activityPaging.getTotalElements());
+        baseResponseList.setData(activityPaging.getContent());
+
+        return new ResponseEntity<>(baseResponseList, HttpStatus.OK);
     }
 
     @GetMapping("/activities/{id}")

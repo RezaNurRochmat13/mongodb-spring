@@ -4,6 +4,8 @@ import com.backend.mongodb.entity.Activity;
 import com.backend.mongodb.repository.ActivityRepository;
 import com.backend.mongodb.util.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +19,8 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityRepository activityRepository;
 
     @Override
-    public List<Activity> findAllActivities() {
-        return activityRepository.findAll();
+    public Page<Activity> findAllActivities(Pageable pageable) {
+        return activityRepository.findAll(pageable);
     }
 
     @Override

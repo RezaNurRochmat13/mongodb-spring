@@ -1,18 +1,31 @@
 package com.backend.mongodb.controller;
 
 import com.backend.mongodb.MongoDBApplicationTests;
+import com.backend.mongodb.entity.Activity;
 import com.backend.mongodb.repository.ActivityRepository;
+import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles(profiles = "test")
 public class ActivityControllerTests extends MongoDBApplicationTests {
     @Autowired
     private MockMvc mockMvc;
@@ -20,11 +33,54 @@ public class ActivityControllerTests extends MongoDBApplicationTests {
     @Autowired
     private ActivityRepository activityRepository;
 
-    @Test
-    public void testGetAllActivitiesWithPagination() {}
+    @Before
+    public void setupData() throws Exception {
+        List<Activity> activityList = new ArrayList<>(
+                Arrays.asList(
+                        new Activity("Insert DB", "", "Postman"),
+                        new Activity("Update DB", "", "Postman"),
+                        new Activity("DELETE DB", "", "Postman"),
+                        new Activity("GET DATA DB", "", "Postman"),
+                        new Activity("GET DETAIL DB", "", "Postman")
+                )
+        );
+
+        activityRepository.saveAll(activityList);
+    }
 
     @Test
-    public void testGetAllActivitiesWithoutPagination() {}
+    public void testGetAllActivitiesWithPagination() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/v1/activities?page=0&size=10")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        JSONObject actual = new JSONObject(response.getResponse().getContentAsString());
+
+        // Assertion
+        assertEquals(200, response.getResponse().getStatus());
+        assertEquals(10, actual.getJSONArray("data").length());
+    }
+
+    @Test
+    public void testGetAllActivitiesWithoutPagination() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/v1/activities")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        JSONObject actual = new JSONObject(response.getResponse().getContentAsString());
+
+        // Assertion
+        assertEquals(200, response.getResponse().getStatus());
+        assertEquals(10, actual.getJSONArray("data").length());
+    }
 
     @Test
     public void testGetDetailActivitiesWithValidIds() {}

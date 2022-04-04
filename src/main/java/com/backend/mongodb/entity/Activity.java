@@ -25,4 +25,10 @@ public class Activity extends Timestamp {
 
     @JsonProperty("agent")
     private String agent;
+
+    public Activity(String activityName, String activityDescription, String agent) {
+        this.activityName = activityName;
+        this.activityDescription = activityDescription;
+        this.agent = agent;
+    }
 }
