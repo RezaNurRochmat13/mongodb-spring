@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional
@@ -47,5 +46,13 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setAgent(payload.getAgent());
 
         return activityRepository.save(activity);
+    }
+
+    @Override
+    public void deleteActivity(String id) {
+        Activity activity = activityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found id : " + id));
+
+        activityRepository.delete(activity);
     }
 }

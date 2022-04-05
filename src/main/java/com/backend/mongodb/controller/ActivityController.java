@@ -51,4 +51,11 @@ public class ActivityController {
         return new ResponseEntity<>(activityService.updateActivity(id, payload), HttpStatus.OK);
     }
 
+    @DeleteMapping("/activities/{id}")
+    public ResponseEntity<Object> deleteActivity(@PathVariable String id) {
+        activityService.deleteActivity(id);
+
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+    }
+
 }
