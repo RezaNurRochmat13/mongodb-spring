@@ -3,6 +3,7 @@ package com.backend.mongodb.controller;
 import com.backend.mongodb.MongoDBApplicationTests;
 import com.backend.mongodb.entity.Activity;
 import com.backend.mongodb.repository.ActivityRepository;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,10 +122,38 @@ public class ActivityControllerTests extends MongoDBApplicationTests {
     }
 
     @Test
-    public void testCreateNewActivityWithPayload() {}
+    public void testCreateNewActivityWithPayload() throws Exception {
+        JSONObject payload = new JSONObject();
+        payload.put("activity_name", "Insert DB");
+        payload.put("activity_description", "");
+        payload.put("agent", "Insomnia/Firefox");
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/v1/activities")
+                .content(payload.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(201, response.getResponse().getStatus());
+    }
 
     @Test
-    public void testCreateNewActivityWithoutPayload() {}
+    public void testCreateNewActivityWithoutPayload() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/v1/activities")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(400, response.getResponse().getStatus());
+    }
 
     @Test
     public void testUpdateActivityWithValidIdAndValidPayload() {}
