@@ -54,8 +54,9 @@ public class ActivityController {
     @PutMapping("/activities/{id}")
     public ResponseEntity<Object> updateActivity(@RequestBody Activity payload,
                                                  @PathVariable String id) {
+        baseResponseSingle.setData(activityService.updateActivity(id, payload));
 
-        return new ResponseEntity<>(activityService.updateActivity(id, payload), HttpStatus.OK);
+        return new ResponseEntity<>(baseResponseSingle, HttpStatus.OK);
     }
 
     @DeleteMapping("/activities/{id}")

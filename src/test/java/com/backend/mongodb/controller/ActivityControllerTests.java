@@ -156,13 +156,69 @@ public class ActivityControllerTests extends MongoDBApplicationTests {
     }
 
     @Test
-    public void testUpdateActivityWithValidIdAndValidPayload() {}
+    public void testUpdateActivityWithValidIdAndValidPayload() throws Exception {
+        JSONObject payload = new JSONObject();
+        payload.put("activity_name", "Delete Data DB");
+        payload.put("activity_description", "");
+        payload.put("agent", "Insomnia/Firefox");
+
+        Activity activity = activityRepository.save(
+                new Activity("Update Activity DB", "", "Postman")
+        );
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/api/v1/activities/" + activity.getId())
+                .content(payload.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        JSONObject actual = new JSONObject(response.getResponse().getContentAsString());
+
+        // Assertion
+        assertEquals(200, response.getResponse().getStatus());
+        assertEquals("Delete Data DB", actual.getJSONObject("data").get("activity_name"));
+    }
 
     @Test
-    public void testUpdateActivityWithInvalidIdAndValidPayload() {}
+    public void testUpdateActivityWithInvalidIdAndValidPayload() throws Exception {
+        JSONObject payload = new JSONObject();
+        payload.put("activity_name", "Delete Data DB");
+        payload.put("activity_description", "");
+        payload.put("agent", "Insomnia/Firefox");
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/api/v1/activities/ssssasasas")
+                .content(payload.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(404, response.getResponse().getStatus());
+    }
 
     @Test
-    public void testUpdateActivityWithValidIdAndInvalidPayload() {}
+    public void testUpdateActivityWithValidIdAndInvalidPayload() throws Exception {
+        Activity activity = activityRepository.save(
+                new Activity("Update Activity DB", "", "Postman")
+        );
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/api/v1/activities/" + activity.getId())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(400, response.getResponse().getStatus());
+    }
 
     @Test
     public void testDeleteActivityWithValidIds() {}
