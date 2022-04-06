@@ -221,8 +221,34 @@ public class ActivityControllerTests extends MongoDBApplicationTests {
     }
 
     @Test
-    public void testDeleteActivityWithValidIds() {}
+    public void testDeleteActivityWithValidIds() throws Exception {
+        Activity activity = activityRepository.save(
+                new Activity("Update Activity DB", "", "Postman")
+        );
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/api/v1/activities/" + activity.getId())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(204, response.getResponse().getStatus());
+    }
 
     @Test
-    public void testDeleteActivityWithInvalidIds() {}
+    public void testDeleteActivityWithInvalidIds() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/api/v1/activities/askansajnxsjcxs")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(404, response.getResponse().getStatus());
+    }
 }
