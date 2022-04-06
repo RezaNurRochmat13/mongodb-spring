@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
@@ -83,10 +84,41 @@ public class ActivityControllerTests extends MongoDBApplicationTests {
     }
 
     @Test
-    public void testGetDetailActivitiesWithValidIds() {}
+    public void testGetDetailActivitiesWithValidIds() throws Exception {
+        Activity activity = activityRepository.save(
+                new Activity("Update Activity DB", "", "Postman")
+        );
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/v1/activities/" + activity.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        JSONObject actual = new JSONObject(response.getResponse().getContentAsString());
+
+        // Assertion
+        assertEquals(200, response.getResponse().getStatus());
+        assertEquals("Update Activity DB", actual.getJSONObject("data").get("activity_name"));
+    }
 
     @Test
-    public void testGetDetailActivitiesWithInvalidIds() {}
+    public void testGetDetailActivitiesWithInvalidIds() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/v1/activities/" + new Random().nextLong())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult response = mockMvc
+                .perform(requestBuilder)
+                .andReturn();
+
+        // Assertion
+        assertEquals(404, response.getResponse().getStatus());
+    }
 
     @Test
     public void testCreateNewActivityWithPayload() {}

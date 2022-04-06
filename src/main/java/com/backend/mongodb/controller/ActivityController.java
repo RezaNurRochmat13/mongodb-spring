@@ -3,6 +3,7 @@ package com.backend.mongodb.controller;
 import com.backend.mongodb.entity.Activity;
 import com.backend.mongodb.service.ActivityServiceImpl;
 import com.backend.mongodb.util.BaseResponseList;
+import com.backend.mongodb.util.BaseResponseSingle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,9 @@ public class ActivityController {
     @Autowired
     private BaseResponseList baseResponseList;
 
+    @Autowired
+    private BaseResponseSingle baseResponseSingle;
+
     @GetMapping("/activities")
     public ResponseEntity<Object> getAllActivities(@RequestParam(defaultValue = "0", name = "page") Integer page,
                                                    @RequestParam(defaultValue = "10", name = "size") Integer size) {
@@ -37,7 +41,9 @@ public class ActivityController {
 
     @GetMapping("/activities/{id}")
     public ResponseEntity<Object> getDetailActivities(@PathVariable String id) {
-        return new ResponseEntity<>(activityService.detailActivityById(id), HttpStatus.OK);
+        baseResponseSingle.setData(activityService.detailActivityById(id));
+
+        return new ResponseEntity<>(baseResponseSingle, HttpStatus.OK);
     }
 
     @PostMapping("/activities")
@@ -48,6 +54,7 @@ public class ActivityController {
     @PutMapping("/activities/{id}")
     public ResponseEntity<Object> updateActivity(@RequestBody Activity payload,
                                                  @PathVariable String id) {
+
         return new ResponseEntity<>(activityService.updateActivity(id, payload), HttpStatus.OK);
     }
 
