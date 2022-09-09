@@ -19,12 +19,6 @@ public class ActivityController {
     @Autowired
     private ActivityServiceImpl activityService;
 
-    @Autowired
-    private BaseResponseList baseResponseList;
-
-    @Autowired
-    private BaseResponseSingle baseResponseSingle;
-
     @GetMapping("/activities")
     public ResponseEntity<Object> getAllActivities(@RequestParam(defaultValue = "0", name = "page") Integer page,
                                                    @RequestParam(defaultValue = "10", name = "size") Integer size) {
@@ -32,16 +26,20 @@ public class ActivityController {
 
         Page<Activity> activityPaging = activityService.findAllActivities(pageable);
 
-        baseResponseList.setCount(activityPaging.getSize());
-        baseResponseList.setTotal(activityPaging.getTotalElements());
-        baseResponseList.setData(activityPaging.getContent());
+        BaseResponseList baseResponseList = BaseResponseList.builder()
+                .count(activityPaging.getSize())
+                .total(activityPaging.getTotalElements())
+                .data(activityPaging.getContent())
+                .build();
 
         return new ResponseEntity<>(baseResponseList, HttpStatus.OK);
     }
 
     @GetMapping("/activities/{id}")
     public ResponseEntity<Object> getDetailActivities(@PathVariable String id) {
-        baseResponseSingle.setData(activityService.detailActivityById(id));
+        BaseResponseSingle baseResponseSingle = BaseResponseSingle.builder()
+                .data(activityService.detailActivityById(id))
+                .build();
 
         return new ResponseEntity<>(baseResponseSingle, HttpStatus.OK);
     }
@@ -54,7 +52,9 @@ public class ActivityController {
     @PutMapping("/activities/{id}")
     public ResponseEntity<Object> updateActivity(@RequestBody Activity payload,
                                                  @PathVariable String id) {
-        baseResponseSingle.setData(activityService.updateActivity(id, payload));
+        BaseResponseSingle baseResponseSingle = BaseResponseSingle.builder()
+                .data(activityService.updateActivity(id, payload))
+                .build();
 
         return new ResponseEntity<>(baseResponseSingle, HttpStatus.OK);
     }
